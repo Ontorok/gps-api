@@ -1,0 +1,20 @@
+[
+  {
+    "username": "nasir",
+    "password": "$2b$10$B2/pbPu72YHNMAnwcWrSOuDMPeoirAsixUV8b0Be9pIETf81V0p6a",
+    "roles": ["5150", "1984", "1754"],
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6Im5hc2lyIiwicm9sZXMiOlsiNTE1MCIsIjE5ODQiLCIxNzU0Il19LCJpYXQiOjE2NDg4NDQ2NTcsImV4cCI6MTY0ODkzMTA1N30.7Nj6zgJJNAXd24D6TLFsnorklDY5__JYQX_gZa_Vqr4"
+  },
+  {
+    "username": "ahmed",
+    "password": "$2b$10$SkWjrr3cRwUW7DzKu1.v3.iAaQyS2SowLI9Y9.lnkK9RYHG7lj8Vy",
+    "roles": ["1754"],
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6ImFobWVkIiwicm9sZXMiOlsiMTc1NCJdfSwiaWF0IjoxNjQ4ODQ0NDMyLCJleHAiOjE2NDg5MzA4MzJ9.A_SbxNYXKFg95x-VE0yQ2Ct9ltu0gFWOkTSIqrxHKtU"
+  },
+  {
+    "username": "rima",
+    "password": "$2b$10$r8M6SHOqGryZB2uasOO/genWG1x4NNmH65PdSq4loI2w5pmkqUJsi",
+    "roles": ["1984", "1754"],
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySW5mbyI6eyJ1c2VybmFtZSI6InJpbWEiLCJyb2xlcyI6WyIxOTg0IiwiMTc1NCJdfSwiaWF0IjoxNjQ4ODQ0NDg4LCJleHAiOjE2NDg5MzA4ODh9.cFXS8luWX7eblT1bWxOeQkoi7YhA5VsfB0SCPYCOtV0"
+  }
+]
