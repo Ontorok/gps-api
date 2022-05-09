@@ -17,7 +17,6 @@ const connectDB = require("./config/dbConnection");
 const { realpathSync } = require("fs");
 
 const PORT = process.env.PORT || 3500;
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/gpsDB';
 
 const app = express();
 

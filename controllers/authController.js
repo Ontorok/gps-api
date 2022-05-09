@@ -83,11 +83,11 @@ const handleLogin = async (req, res) => {
 
     const { password, __v, createdAt, updatedAt, ...remainings } = foundUser._doc
 
-    res.cookie("jwt", refreshToken, {
+    res.cookie('jwt', refreshToken, {
       httpOnly: true,
-      sameSite: "none",
       secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'none',
+      maxAge: 24 * 60 * 60 * 1000
     });
     res.status(200).json({
       succeed: true,
@@ -130,8 +130,11 @@ const handleLogout = async (req, res) => {
   // on client, also delete the acces token
 
   const cookies = req.cookies;
+  console.log({ cookies: cookies?.jwt })
+
   if (!cookies?.jwt) return res.sendStatus(204); // No content
   const refreshToken = cookies.jwt;
+
 
   // if refresh in db?
   const loggedInUser = await User.findOne({ refreshToken }).exec();
@@ -139,8 +142,8 @@ const handleLogout = async (req, res) => {
   if (!loggedInUser) {
     res.clearCookie("jwt", {
       httpOnly: true,
-      sameSite: "none",
       secure: true,
+      sameSite: "none",
     });
     return res.sendStatus(204); // No content
   }
