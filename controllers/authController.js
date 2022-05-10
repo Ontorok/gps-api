@@ -64,7 +64,7 @@ const handleLogin = async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '600s' }
     );
     const refreshToken = jwt.sign(
       {
@@ -106,21 +106,21 @@ const handleRefreshToken = async (req, res) => {
   const refreshToken = cookies.jwt;
 
   const loggedInUser = await User.findOne({ refreshToken }).exec();
-  if (!loggedInUser) return res.sendStatus(403); // Forbidden
+  if (!loggedInUser) return res.sendStatus(403).json('sdfasf'); // Forbidden
 
   // evaluate jwt
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err || loggedInUser.username !== decoded.UserInfo.username)
+    if (err || loggedInUser.email !== decoded.UserInfo.email)
       return res.sendStatus(403); // Forbidden
     const accessToken = jwt.sign(
       {
         UserInfo: {
-          username: loggedInUser.username,
-          roles: loggedInUser.roles,
+          email: loggedInUser.email,
+          role: loggedInUser.role,
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "300s" }
+      { expiresIn: "600s" }
     );
     res.json({ accessToken });
   });
@@ -130,7 +130,6 @@ const handleLogout = async (req, res) => {
   // on client, also delete the acces token
 
   const cookies = req.cookies;
-  console.log({ cookies: cookies?.jwt })
 
   if (!cookies?.jwt) return res.sendStatus(204); // No content
   const refreshToken = cookies.jwt;

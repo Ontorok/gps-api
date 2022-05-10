@@ -45,6 +45,10 @@ app.use(cookieParser());
 // routes handler
 app.use("/api/auth", authRoute);
 
+app.use('/api/test', verifyJWT, (req, res) => {
+  res.sendStatus(200).json("success")
+})
+
 // app.use('/',(req,res)=>{
 
 // })
