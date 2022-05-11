@@ -10,7 +10,7 @@ const clubSchema = new Schema(
       type: String,
       required: true
     },
-    state: {
+    status: {
       type: Boolean,
       default: true
     }
