@@ -49,7 +49,7 @@ const handleLogin = async (req, res) => {
 
   const foundUser = await User.findOne({ email: email }).exec();
 
-  if (!foundUser) return res.status(401).json({ message: "user not found" });
+  if (!foundUser) return res.status(401).json({ message: "username or password is incorrect!!" });
 
   // evaluate password
   const isMatchPassword = await bcrypt.compare(password, foundUser.password);
@@ -64,7 +64,7 @@ const handleLogin = async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '600s' }
+      { expiresIn: '10s' }
     );
     const refreshToken = jwt.sign(
       {
@@ -74,7 +74,7 @@ const handleLogin = async (req, res) => {
         },
       },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "3600s" }
+      { expiresIn: "30s" }
     );
 
     // saving refresh token with current user
@@ -120,7 +120,7 @@ const handleRefreshToken = async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "600s" }
+      { expiresIn: "10s" }
     );
     res.json({ accessToken });
   });

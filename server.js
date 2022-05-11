@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 // Local modules
 const { logger } = require("./middleware/logEvents");
 const { errorHander } = require("./middleware/errorHandler");
-const { rootRoute, employeesRoute, authRoute } = require("./routes");
+const { rootRoute, employeesRoute, authRoute, clubRoute } = require("./routes");
 const corsOptions = require("./config/corsConfig");
 const verifyJWT = require("./middleware/verifyJWT");
 const credentials = require("./middleware/credentials");
@@ -45,13 +45,9 @@ app.use(cookieParser());
 // routes handler
 app.use("/api/auth", authRoute);
 
-app.use('/api/test', verifyJWT, (req, res) => {
-  res.sendStatus(200).json("success")
-})
+app.use('/api/club', clubRoute)
 
-// app.use('/',(req,res)=>{
 
-// })
 app.use(errorHander);
 
 mongoose.connection.once("open", () => {

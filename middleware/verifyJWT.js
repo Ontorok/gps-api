@@ -19,7 +19,6 @@ const verifyJWT = (req, res, next) => {
     req.role = decoded.UserInfo.role;
     next();
   } catch (err) {
-    console.log(err.message);
     return res.status(403).json({
       message: "Authentication error from verifyJWT()=> jwt.verify(ddd)", // invalid token
     });
