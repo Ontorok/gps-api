@@ -103,8 +103,8 @@ const restore = async (req, res) => {
     );
     res.status(200).json({
       succeed: true,
-      message: 'Data re-stored successfully!!!!',
-      data: updatedClub
+      message: 'Data re-stored successfully!!!!'
+
     })
   } catch (err) {
     res.status(500).json({ message: err.message });
