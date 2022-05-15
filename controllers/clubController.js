@@ -1,18 +1,44 @@
 const Club = require('../models/Club');
 
 const fetchAll = async (req, res) => {
-  const { page, perPage, sortedColumn, sortedBy, status } = req.query
+  const { page, perPage, sortedColumn, sortedBy } = req.query
 
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage)
     const endIndex = ((parseInt(page) - 1) + 1) * parseInt(perPage)
     const clubs = await Club
-      .find({ status: status })
+      .find({ isActive: true })
       .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
+      .select("name status")
       .exec();
-    const total = await Club.countDocuments({ status: status }).exec()
+    const total = await Club.countDocuments({ isActive: true }).exec()
+
+    return res.status(200).json({
+      succeed: true,
+      total: total,
+      result: clubs,
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+const fetchAllArchive = async (req, res) => {
+  const { page, perPage, sortedColumn, sortedBy } = req.query
+
+  try {
+    const startIndex = (parseInt(page) - 1) * parseInt(perPage)
+    const endIndex = ((parseInt(page) - 1) + 1) * parseInt(perPage)
+    const clubs = await Club
+      .find({ isActive: false })
+      .sort({ [sortedColumn]: sortedBy })
+      .limit(perPage)
+      .skip(startIndex)
+      .select("name status")
+      .exec();
+    const total = await Club.countDocuments({ isActive: false }).exec()
 
     return res.status(200).json({
       succeed: true,
@@ -25,13 +51,42 @@ const fetchAll = async (req, res) => {
 }
 
 const create = async (req, res) => {
-  const { serial, name, state } = req.body;
-
+  const { name, state } = req.body;
   try {
-    const savedClub = await Club.create({ serial, name, state })
+    const savedClub = await Club.create({ name, state })
     res.status(201).json({
       succeed: true,
-      data: savedClub
+      message: 'Data saved successfully!!!!'
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+const update = async (req, res) => {
+  const { _id, name, status } = req.body;
+  try {
+    const updatedClub = await Club.findOneAndUpdate(
+      { _id: _id },
+      { name: name, status: status });
+    res.status(200).json({
+      succeed: true,
+      message: 'Data updated successfully!!!!'
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+const deleteRecord = async (req, res) => {
+  const { id } = req.query;
+  try {
+    const updatedClub = await Club.findOneAndUpdate(
+      { _id: id },
+      { isActive: false });
+    res.status(200).json({
+      succeed: true,
+      message: 'Data deleted successfully!!!!'
     })
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -41,5 +96,5 @@ const create = async (req, res) => {
 
 
 module.exports = {
-  fetchAll, create
+  fetchAll, fetchAllArchive, create, update, deleteRecord
 }

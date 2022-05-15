@@ -47,9 +47,13 @@ app.use("/api/auth", authRoute);
 
 app.use('/api/club', clubRoute)
 
+app.use('/', (req, res) => {
+
+})
+
 
 app.use(errorHander);
-;
+
 
 mongoose.connection.once("open", () => {
   console.log("connected to MongoDB");

@@ -1,10 +1,13 @@
 const express = require('express');
-const { fetchAll, create } = require('../controllers/clubController');
+const { fetchAll, fetchAllArchive, create, update, deleteRecord } = require('../controllers/clubController');
 const verifyJWT = require("../middleware/verifyJWT");
 
 const router = express.Router();
 
 router.get('/fetch-all', verifyJWT, fetchAll);
-router.post('/create', create);
+router.get('/fetch-all-archive', verifyJWT, fetchAllArchive);
+router.post('/create', verifyJWT, create);
+router.put('/update', verifyJWT, update);
+router.delete('/delete', verifyJWT, deleteRecord);
 
 module.exports = router;

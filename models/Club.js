@@ -3,14 +3,15 @@ const Schema = mongoose.Schema;
 
 const clubSchema = new Schema(
   {
-    serial: {
-      type: Number
-    },
     name: {
       type: String,
       required: true
     },
     status: {
+      type: Boolean,
+      default: true
+    },
+    isActive: {
       type: Boolean,
       default: true
     }
