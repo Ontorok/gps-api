@@ -93,8 +93,26 @@ const deleteRecord = async (req, res) => {
   }
 }
 
+const restore = async (req, res) => {
+  const { id } = req.query;
+  console.log(id);
+  try {
+    const updatedClub = await Club.findOneAndUpdate(
+      { _id: id },
+      { isActive: true }
+    );
+    res.status(200).json({
+      succeed: true,
+      message: 'Data re-stored successfully!!!!',
+      data: updatedClub
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 
 
 module.exports = {
-  fetchAll, fetchAllArchive, create, update, deleteRecord
+  fetchAll, fetchAllArchive, create, update, deleteRecord, restore
 }
