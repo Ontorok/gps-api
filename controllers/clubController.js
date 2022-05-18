@@ -1,19 +1,27 @@
 const Club = require('../models/Club');
 
 const fetchAll = async (req, res) => {
-  const { page, perPage, sortedColumn, sortedBy } = req.query
-
+  const { page, perPage, sortedColumn, sortedBy, clubName, status } = req.query
+  const searchObj = {
+    isActive: true
+  }
+  if (clubName) searchObj['name'] = clubName
+  if (status) searchObj['status'] = status === 'active' ? true : false
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage)
     const endIndex = ((parseInt(page) - 1) + 1) * parseInt(perPage)
     const clubs = await Club
-      .find({ isActive: true })
+      .find(searchObj)
       .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
       .select("name status")
       .exec();
-    const total = await Club.countDocuments({ isActive: true }).exec()
+
+
+    const total = await Club.countDocuments({
+      isActive: true, ...searchObj
+    }).exec()
 
     return res.status(200).json({
       succeed: true,
@@ -27,7 +35,6 @@ const fetchAll = async (req, res) => {
 
 const fetchAllArchive = async (req, res) => {
   const { page, perPage, sortedColumn, sortedBy } = req.query
-
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage)
     const endIndex = ((parseInt(page) - 1) + 1) * parseInt(perPage)
