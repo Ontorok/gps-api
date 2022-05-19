@@ -5,7 +5,7 @@ const fetchAll = async (req, res) => {
   const searchObj = {
     isActive: true
   }
-  if (clubName) searchObj['name'] = clubName
+  if (clubName) searchObj['name'] = { $regex: '.*' + clubName + '.*' }
   if (status) searchObj['status'] = status === 'active' ? true : false
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage)
@@ -19,9 +19,7 @@ const fetchAll = async (req, res) => {
       .exec();
 
 
-    const total = await Club.countDocuments({
-      isActive: true, ...searchObj
-    }).exec()
+    const total = await Club.countDocuments(searchObj).exec()
 
     return res.status(200).json({
       succeed: true,
@@ -34,18 +32,22 @@ const fetchAll = async (req, res) => {
 }
 
 const fetchAllArchive = async (req, res) => {
-  const { page, perPage, sortedColumn, sortedBy } = req.query
+  const { page, perPage, sortedColumn, sortedBy, clubName, status } = req.query
+  const searchObj = {
+    isActive: false
+  }
+  if (clubName) searchObj['name'] = { $regex: '.*' + clubName + '.*' }
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage)
     const endIndex = ((parseInt(page) - 1) + 1) * parseInt(perPage)
     const clubs = await Club
-      .find({ isActive: false })
+      .find(searchObj)
       .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
       .select("name status")
       .exec();
-    const total = await Club.countDocuments({ isActive: false }).exec()
+    const total = await Club.countDocuments(searchObj).exec()
 
     return res.status(200).json({
       succeed: true,
