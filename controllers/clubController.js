@@ -59,6 +59,22 @@ const fetchAllArchive = async (req, res) => {
   }
 }
 
+const fetchAllActive = async (req, res) => {
+  try {
+    const activeClubs = await Club
+      .find({ isActive: true, status: true })
+      .select("name")
+      .exec();
+
+    return res.status(200).json({
+      succeed: true,
+      result: activeClubs,
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 const create = async (req, res) => {
   const { name, state } = req.body;
   try {
@@ -123,5 +139,5 @@ const restore = async (req, res) => {
 
 
 module.exports = {
-  fetchAll, fetchAllArchive, create, update, deleteRecord, restore
+  fetchAll, fetchAllArchive, fetchAllActive, create, update, deleteRecord, restore
 }
