@@ -3,6 +3,8 @@ const ROLE_LIST = require("../constants/roleList");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const accessToken_exprireIn = 300;
+const refreshToken_expireIn = '1h',
 
 const handleNewUser = async (req, res) => {
   const { name, username, email, address, phone, role, password } = req.body;
@@ -64,7 +66,7 @@ const handleLogin = async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: accessToken_exprireIn }
     );
     const refreshToken = jwt.sign(
       {
@@ -74,7 +76,7 @@ const handleLogin = async (req, res) => {
         },
       },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: accessToken_exprireIn }
     );
 
     // saving refresh token with current user
@@ -120,7 +122,7 @@ const handleRefreshToken = async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: accessToken_exprireIn }
     );
     res.json({ accessToken });
   });
