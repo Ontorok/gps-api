@@ -3,8 +3,8 @@ const ROLE_LIST = require("../constants/roleList");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const accessToken_exprireIn = 5;
-const refreshToken_expireIn = 30;
+const accessToken_exprireIn = '1h';
+const refreshToken_expireIn = '1d';
 
 const handleNewUser = async (req, res) => {
   const { name, username, email, address, phone, role, password } = req.body;
