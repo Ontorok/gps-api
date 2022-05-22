@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: "./.env.development" });
 // Core modules
 const express = require("express");
 const path = require("path");
@@ -9,7 +9,13 @@ const mongoose = require("mongoose");
 // Local modules
 const { logger } = require("./middleware/logEvents");
 const { errorHander } = require("./middleware/errorHandler");
-const { rootRoute, employeesRoute, authRoute, clubRoute, groomerRoute } = require("./routes");
+const {
+  rootRoute,
+  employeesRoute,
+  authRoute,
+  clubRoute,
+  groomerRoute,
+} = require("./routes");
 const corsOptions = require("./config/corsConfig");
 const verifyJWT = require("./middleware/verifyJWT");
 const credentials = require("./middleware/credentials");
@@ -44,16 +50,12 @@ app.use(cookieParser());
 
 // routes handler
 app.use("/api/auth", authRoute);
-app.use('/api/club', clubRoute);
-app.use('/api/groomer', groomerRoute);
+app.use("/api/club", clubRoute);
+app.use("/api/groomer", groomerRoute);
 
-app.use('/', (req, res) => {
-
-})
-
+app.use("/", (req, res) => {});
 
 app.use(errorHander);
-
 
 mongoose.connection.once("open", () => {
   console.log("connected to MongoDB");
