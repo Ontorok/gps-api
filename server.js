@@ -15,6 +15,7 @@ const {
   authRoute,
   clubRoute,
   groomerRoute,
+  entriesRoute,
 } = require("./routes");
 const corsOptions = require("./config/corsConfig");
 const verifyJWT = require("./middleware/verifyJWT");
@@ -52,6 +53,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/club", clubRoute);
 app.use("/api/groomer", groomerRoute);
+app.use("/api/entries", entriesRoute);
 
 app.use("/", (req, res) => {});
 
