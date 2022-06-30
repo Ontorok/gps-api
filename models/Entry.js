@@ -28,4 +28,6 @@ const entrySchema = new Schema({
   },
 });
 
+entrySchema.index({ deviceID: 1, CountyID: 1 }, { unique: true });
+
 module.exports = mongoose.model("Entry", entrySchema);

@@ -1,7 +1,6 @@
 const Entry = require("../models/Entry");
 
 const create = async (req, res) => {
-  console.log(req.body);
   try {
     const savedClub = await Entry.insertMany(req.body);
     res.status(201).json({
@@ -9,7 +8,12 @@ const create = async (req, res) => {
       message: "Data saved successfully!!!!",
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    const errMessage =
+      err?.code === 11000
+        ? "Duplicate record found!!!"
+        : "There was an error to save these record!!";
+    console.log(errMessage);
+    res.status(500).json({ message: errMessage });
   }
 };
 
