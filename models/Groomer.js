@@ -6,6 +6,15 @@ const groomerSchema = new Schema({
     type: String,
     required: true,
   },
+  clubId: {
+    type: Schema.Types.ObjectId,
+    ref: "Club",
+    required: true,
+  },
+  clubName: {
+    type: String,
+    required: true,
+  },
   gpsId: {
     type: String,
     required: true,

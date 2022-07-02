@@ -12,7 +12,7 @@ const fetchAll = async (req, res) => {
       .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
-      .select("name gpsId rate isActive")
+      .select("name clubId clubName gpsId rate isActive")
       .exec();
 
     const total = await Groomer.countDocuments(searchObj).exec();
@@ -39,7 +39,7 @@ const fetchAllArchive = async (req, res) => {
       .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
-      .select("name gpsId rate")
+      .select("name clubId clubName gpsId rate isActive")
       .exec();
 
     const total = await Groomer.countDocuments(searchObj).exec();
@@ -55,10 +55,16 @@ const fetchAllArchive = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const { name, gpsId, rate, isActive } = req.body;
-  //console.log(JSON.stringify(req.body, null, 2));
+  const { name, clubId, clubName, gpsId, rate, isActive } = req.body;
   try {
-    const savedGroomer = await Groomer.create({ name, gpsId, rate, isActive });
+    const savedGroomer = await Groomer.create({
+      name,
+      clubId,
+      clubName,
+      gpsId,
+      rate,
+      isActive,
+    });
     res.status(201).json({
       succeed: true,
       message: "Data saved successfully!!!!",
@@ -69,11 +75,11 @@ const create = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const { _id, name, gpsId, rate, isActive } = req.body;
+  const { _id, name, clubId, clubName, gpsId, rate, isActive } = req.body;
   try {
     const updatedGroomer = await Groomer.findOneAndUpdate(
       { _id: _id },
-      { name, gpsId, rate, isActive }
+      { name, clubId, clubName, gpsId, rate, isActive }
     );
     res.status(200).json({
       succeed: true,
