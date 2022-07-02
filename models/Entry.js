@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const entrySchema = new Schema({
-  deviceID: {
+  deviceId: {
     type: String,
     required: true,
   },
@@ -10,24 +10,35 @@ const entrySchema = new Schema({
     type: Date,
     required: true,
   },
-  CountyID: {
+  clubId: {
     type: String,
     required: true,
   },
-  CountyName: {
+  clubName: {
     type: String,
     required: true,
   },
-  TrailID: {
+  trailId: {
     type: String,
     required: true,
   },
-  TrailName: {
+  trailName: {
+    type: String,
+    required: true,
+  },
+  fundingStatus: {
+    type: String,
+    required: true,
+  },
+  eligibleTime: {
     type: String,
     required: true,
   },
 });
 
-entrySchema.index({ deviceID: 1, CountyID: 1 }, { unique: true });
+entrySchema.index(
+  { deviceId: 1, date: 1, clubId: 1, fundingStatus: 1 },
+  { unique: true }
+);
 
 module.exports = mongoose.model("Entry", entrySchema);
