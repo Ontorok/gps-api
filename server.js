@@ -55,7 +55,10 @@ app.use("/api/club", clubRoute);
 app.use("/api/groomer", groomerRoute);
 app.use("/api/entries", entriesRoute);
 
-app.use("/", (req, res) => {});
+app.post("/myurl", (req, res) => {
+  console.log(req.body);
+  res.sendStatus(204);
+});
 
 app.use(errorHander);
 
