@@ -10,7 +10,6 @@ const create = async (req, res) => {
     const filteredGpsEntries = groomersIds
       .map((g) => gpsEntries.filter((entry) => entry.deviceId === g))
       .flat();
-    //console.log({ fil: filteredGpsEntries.length, act: gpsEntries.length });
     const savedClub = await Entry.insertMany(filteredGpsEntries);
     res.status(201).json({
       succeed: true,
