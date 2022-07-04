@@ -31,7 +31,7 @@ const entrySchema = new Schema({
     required: true,
   },
   eligibleTime: {
-    type: String,
+    type: Number,
     required: true,
   },
 });

@@ -1,6 +1,7 @@
 const Entry = require("../models/Entry");
 const Groomer = require("../models/Groomer");
 const _ = require("lodash");
+
 const create = async (req, res) => {
   const gpsEntries = req.body;
   try {
@@ -25,4 +26,62 @@ const create = async (req, res) => {
   }
 };
 
-module.exports = { create };
+const fetchAllGrooming = async (req, res) => {
+  const { page, perPage } = req.query;
+  const searchObj = {
+    isActive: true,
+    eligibleTime: { $gt: 0 },
+  };
+  try {
+    const startIndex = (parseInt(page) - 1) * parseInt(perPage);
+    const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
+    const clubs = await Entry.find(searchObj)
+      .limit(perPage)
+      .skip(startIndex)
+      .select(
+        "deviceId date clubId clubName trailId trailName fundingStatus eligibleTime"
+      )
+      .exec();
+
+    const total = await Entry.countDocuments(searchObj).exec();
+
+    return res.status(200).json({
+      succeed: true,
+      total: total,
+      result: clubs,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const fetchAllNonGrooming = async (req, res) => {
+  const { page, perPage } = req.query;
+  const searchObj = {
+    isActive: true,
+    eligibleTime: { $lte: 0 },
+  };
+  try {
+    const startIndex = (parseInt(page) - 1) * parseInt(perPage);
+    const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
+    const clubs = await Entry.find(searchObj)
+      .limit(perPage)
+      .skip(startIndex)
+      .select(
+        "deviceId date clubId clubName trailId trailName fundingStatus eligibleTime"
+      )
+      .exec();
+
+    const total = await Entry.countDocuments(searchObj).exec();
+
+    return res.status(200).json({
+      succeed: true,
+      total: total,
+      result: clubs,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = { create, fetchAllGrooming, fetchAllNonGrooming };
