@@ -3,8 +3,8 @@ const ROLE_LIST = require("../constants/roleList");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const accessToken_exprireIn = '1h';
-const refreshToken_expireIn = '1d';
+const accessToken_exprireIn = "1h";
+const refreshToken_expireIn = "1d";
 
 const handleNewUser = async (req, res) => {
   const { name, username, email, address, phone, role, password } = req.body;
@@ -51,7 +51,10 @@ const handleLogin = async (req, res) => {
 
   const foundUser = await User.findOne({ email: email }).exec();
 
-  if (!foundUser) return res.status(401).json({ message: "username or password is incorrect!!" });
+  if (!foundUser)
+    return res
+      .status(401)
+      .json({ message: "username or password is incorrect!!" });
 
   // evaluate password
   const isMatchPassword = await bcrypt.compare(password, foundUser.password);
@@ -83,17 +86,18 @@ const handleLogin = async (req, res) => {
     foundUser.refreshToken = refreshToken;
     const result = await foundUser.save();
 
-    const { password, __v, createdAt, updatedAt, ...remainings } = foundUser._doc
+    const { password, __v, createdAt, updatedAt, ...remainings } =
+      foundUser._doc;
 
-    res.cookie('jwt', refreshToken, {
+    res.cookie("jwt", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
     });
     res.status(200).json({
       succeed: true,
-      accessToken: accessToken
+      accessToken: accessToken,
     });
   } else {
     res.status(401).json({ message: "username  password is incorrect" });
@@ -108,7 +112,7 @@ const handleRefreshToken = async (req, res) => {
   const refreshToken = cookies.jwt;
 
   const loggedInUser = await User.findOne({ refreshToken }).exec();
-  if (!loggedInUser) return res.sendStatus(403).json('sdfasf'); // Forbidden
+  if (!loggedInUser) return res.sendStatus(403).json("sdfasf"); // Forbidden
 
   // evaluate jwt
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
@@ -136,7 +140,6 @@ const handleLogout = async (req, res) => {
   if (!cookies?.jwt) return res.sendStatus(204); // No content
   const refreshToken = cookies.jwt;
 
-
   // if refresh in db?
   const loggedInUser = await User.findOne({ refreshToken }).exec();
 
@@ -163,16 +166,17 @@ const handleLogout = async (req, res) => {
 
 const getAuthUser = async (req, res) => {
   const foundUser = await User.findOne({ email: req.email }).exec();
-  const { password, __v, createdAt, updatedAt, refreshToken, ...remainings } = foundUser._doc
+  const { password, __v, createdAt, updatedAt, refreshToken, ...remainings } =
+    foundUser._doc;
   res.status(200).json({
-    user: remainings
-  })
-}
+    user: remainings,
+  });
+};
 
 module.exports = {
   handleNewUser,
   handleLogin,
   handleRefreshToken,
   handleLogout,
-  getAuthUser
+  getAuthUser,
 };

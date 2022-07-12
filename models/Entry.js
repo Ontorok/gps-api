@@ -34,6 +34,22 @@ const entrySchema = new Schema({
     type: Number,
     required: true,
   },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    default: null,
+  },
+  createdAt: {
+    type: Date,
+    default: null,
+  },
+  updatedBy: {
+    type: Schema.Types.ObjectId,
+    default: null,
+  },
+  updatedAt: {
+    type: Date,
+    default: null,
+  },
 });
 
 entrySchema.index(

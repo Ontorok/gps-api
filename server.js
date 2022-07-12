@@ -56,7 +56,7 @@ app.use("/api/groomer", groomerRoute);
 app.use("/api/entries", entriesRoute);
 
 app.post("/myurl", (req, res) => {
-  console.log(req.body);
+  console.log(req.params);
   res.sendStatus(204);
 });
 
