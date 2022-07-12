@@ -55,11 +55,6 @@ app.use("/api/club", clubRoute);
 app.use("/api/groomer", groomerRoute);
 app.use("/api/entries", entriesRoute);
 
-app.post("/myurl", (req, res) => {
-  console.log(req.params);
-  res.sendStatus(204);
-});
-
 app.use(errorHander);
 
 mongoose.connection.once("open", () => {

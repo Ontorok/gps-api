@@ -112,7 +112,7 @@ const handleRefreshToken = async (req, res) => {
   const refreshToken = cookies.jwt;
 
   const loggedInUser = await User.findOne({ refreshToken }).exec();
-  if (!loggedInUser) return res.sendStatus(403).json("sdfasf"); // Forbidden
+  if (!loggedInUser) return res.status(403).json("sdfasf"); // Forbidden
 
   // evaluate jwt
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {

@@ -30,16 +30,10 @@ const create = async (req, res) => {
 const createByUser = async (req, res) => {
   const gpsEntries = req.body;
   try {
-    const activeGroomers = await Groomer.find({ isActive: true }).exec();
-    const groomersIds = _.uniq(activeGroomers.map((item) => item.gpsId));
-    const filteredGpsEntries = groomersIds
-      .map((g) => gpsEntries.filter((entry) => entry.deviceId === g))
-      .flat();
-
-    const savedClub = await Entry.insertMany(filteredGpsEntries);
+    const savedEntries = await Entry.insertMany(gpsEntries);
     res.status(201).json({
       succeed: true,
-      data: savedClub,
+      data: savedEntries,
       message: "Data saved successfully!!!!",
     });
   } catch (err) {
@@ -54,7 +48,6 @@ const createByUser = async (req, res) => {
 
 const fetchGpsDataFromKnackApi = async (req, res) => {
   const { date } = req.query;
-  console.log(date);
   const _date = moment(date).format("yyyy-MM-DD");
   const url = `http://54.203.84.201/knack_api/getdata.php?date=${date}`;
   const response = await axios.post(url, null, {
@@ -98,7 +91,7 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
 
     res.status(200).json({
       message: "Date Fetched Successfully",
-      data: uniqueGpsData,
+      data: filteredGpsEntries,
     });
   }
 };
