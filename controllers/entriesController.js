@@ -3,6 +3,7 @@ const Groomer = require("../models/Groomer");
 const _ = require("lodash");
 const moment = require("moment");
 const axios = require("axios");
+const { convertSecondToHour } = require("../helpers/commonHelper");
 
 const create = async (req, res) => {
   const gpsEntries = req.body;
@@ -41,7 +42,6 @@ const createByUser = async (req, res) => {
       err?.code === 11000
         ? "Duplicate record found!!!"
         : "There was an error to save these record!!";
-    console.log(err.message);
     res.status(500).json({ message: errMessage });
   }
 };
@@ -65,7 +65,11 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
     res.status(200).json({ message: "No Record Found", data: [] });
   } else {
     const activeGroomers = await Groomer.find({ isActive: true }).exec();
-    const groomersIds = _.uniq(activeGroomers.map((item) => item.gpsId));
+    const groomers = activeGroomers.map((item) => ({
+      gpsId: item.gpsId,
+      groomerName: item.name,
+      rate: item.rate,
+    }));
 
     const gpsData = Object.keys(rest)
       .map((key) => rest[key])
@@ -75,18 +79,28 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
         }_${entry["Funded/non-funded"]}`,
         deviceId: entry.deviceID,
         date: entry.date,
-        clubId: JSON.parse(entry.County)[0]["id"],
-        clubName: JSON.parse(entry.County)[0]["identifier"],
+        countyId: JSON.parse(entry.County)[0]["id"],
+        countyName: JSON.parse(entry.County)[0]["identifier"],
         trailId: JSON.parse(entry.Trail)["id"],
         trailName: JSON.parse(entry.Trail)["identifier"],
         fundingStatus: entry["Funded/non-funded"],
         eligibleTime: Number(entry["Eligible Time"]),
+        eligibleTimeInHour: convertSecondToHour(Number(entry["Eligible Time"])),
       }));
 
     const uniqueGpsData = _.uniqBy(gpsData, "comparatorKey");
 
-    const filteredGpsEntries = groomersIds
-      .map((g) => uniqueGpsData.filter((entry) => entry.deviceId === g))
+    const filteredGpsEntries = groomers
+      .map((g) =>
+        uniqueGpsData
+          .filter((entry) => entry.deviceId === g.gpsId)
+          .map((item) => ({
+            ...item,
+            groomerName: g.groomerName,
+            rate: g.rate,
+            total: Number((g.rate * item.eligibleTimeInHour).toFixed(2)),
+          }))
+      )
       .flat();
 
     res.status(200).json({

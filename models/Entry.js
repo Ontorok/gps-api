@@ -6,15 +6,19 @@ const entrySchema = new Schema({
     type: String,
     required: true,
   },
+  groomerName: {
+    type: String,
+    required: true,
+  },
   date: {
     type: String,
     required: true,
   },
-  clubId: {
+  countyId: {
     type: String,
     required: true,
   },
-  clubName: {
+  countyName: {
     type: String,
     required: true,
   },
@@ -33,6 +37,26 @@ const entrySchema = new Schema({
   eligibleTime: {
     type: Number,
     required: true,
+  },
+  eligibleTimeInHour: {
+    type: Number,
+    required: true,
+  },
+  rate: {
+    type: Number,
+    required: true,
+  },
+  total: {
+    type: Number,
+    required: true,
+  },
+  isInvalid: {
+    type: Boolean,
+    default: false,
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
   },
   createdBy: {
     type: Schema.Types.ObjectId,
