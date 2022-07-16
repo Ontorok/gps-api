@@ -123,7 +123,7 @@ const fetchAllFunded = async (req, res) => {
       .limit(perPage)
       .skip(startIndex)
       .select(
-        "deviceId date clubId clubName trailId trailName fundingStatus eligibleTime"
+        "deviceId groomerName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
       )
       .exec();
 
@@ -152,7 +152,36 @@ const fetchAllNonFunded = async (req, res) => {
       .limit(perPage)
       .skip(startIndex)
       .select(
-        "deviceId date clubId clubName trailId trailName fundingStatus eligibleTime"
+        "deviceId groomerName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
+      )
+      .exec();
+
+    const total = await Entry.countDocuments(searchObj).exec();
+
+    return res.status(200).json({
+      succeed: true,
+      total: total,
+      result: clubs,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const fetchAllInvalid = async (req, res) => {
+  const { page, perPage } = req.query;
+  const searchObj = {
+    isActive: true,
+    isInvalid: true,
+  };
+  try {
+    const startIndex = (parseInt(page) - 1) * parseInt(perPage);
+    const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
+    const clubs = await Entry.find(searchObj)
+      .limit(perPage)
+      .skip(startIndex)
+      .select(
+        "deviceId groomerName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
       )
       .exec();
 
@@ -173,5 +202,6 @@ module.exports = {
   createByUser,
   fetchAllFunded,
   fetchAllNonFunded,
+  fetchAllInvalid,
   fetchGpsDataFromKnackApi,
 };
