@@ -96,11 +96,11 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
   }
 };
 
-const fetchAllGrooming = async (req, res) => {
+const fetchAllFunded = async (req, res) => {
   const { page, perPage } = req.query;
   const searchObj = {
     isActive: true,
-    eligibleTime: { $gt: 0 },
+    fundingStatus: { $eq: "Funded" },
   };
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
@@ -125,11 +125,11 @@ const fetchAllGrooming = async (req, res) => {
   }
 };
 
-const fetchAllNonGrooming = async (req, res) => {
+const fetchAllNonFunded = async (req, res) => {
   const { page, perPage } = req.query;
   const searchObj = {
     isActive: true,
-    eligibleTime: { $lte: 0 },
+    fundingStatus: { $eq: "Non-Funded" },
   };
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
@@ -157,7 +157,7 @@ const fetchAllNonGrooming = async (req, res) => {
 module.exports = {
   create,
   createByUser,
-  fetchAllGrooming,
-  fetchAllNonGrooming,
+  fetchAllFunded,
+  fetchAllNonFunded,
   fetchGpsDataFromKnackApi,
 };
