@@ -197,6 +197,22 @@ const fetchAllInvalid = async (req, res) => {
   }
 };
 
+const changeEntriesValidityByRange = async (req, res) => {
+  const { markedIds, isInvalid } = req.body;
+  const entries = await Entry.updateMany(
+    { _id: { $in: markedIds } },
+    { $set: { isInvalid: isInvalid } }
+  );
+  if (entries.acknowledged) {
+    res.status(200).json({
+      succeed: true,
+      message: `Mark as ${isInvalid ? "valid" : "invalid"} ${
+        entries.modifiedCount
+      } Entries`,
+    });
+  }
+};
+
 module.exports = {
   create,
   createByUser,
@@ -204,4 +220,5 @@ module.exports = {
   fetchAllNonFunded,
   fetchAllInvalid,
   fetchGpsDataFromKnackApi,
+  changeEntriesValidityByRange,
 };

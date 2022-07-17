@@ -6,6 +6,7 @@ const {
   fetchGpsDataFromKnackApi,
   fetchAllFunded,
   fetchAllInvalid,
+  changeEntriesValidityByRange,
 } = require("../controllers/entriesController");
 const verifyJWT = require("../middleware/verifyJWT");
 
@@ -17,5 +18,6 @@ router.get("/fetch-all-non-funded-entries", verifyJWT, fetchAllNonFunded);
 router.get("/fetch-all-invalid-entries", verifyJWT, fetchAllInvalid);
 router.post("/save-entries", create);
 router.post("/save-entries-by-user", verifyJWT, createByUser);
+router.put("/change-validity", changeEntriesValidityByRange);
 
 module.exports = router;
