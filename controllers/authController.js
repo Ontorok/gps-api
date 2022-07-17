@@ -7,14 +7,24 @@ const accessToken_exprireIn = "1h";
 const refreshToken_expireIn = "1d";
 
 const handleNewUser = async (req, res) => {
-  const { name, username, email, address, phone, role, password } = req.body;
-  if (!email || !password)
+  const {
+    name,
+    username,
+    email,
+    address,
+    phone,
+    clubId,
+    clubName,
+    role,
+    password,
+  } = req.body;
+  if (!username || !password)
     return res
       .status(400)
       .json({ message: "username and password are required!!" });
 
   // check for duplicate username;
-  const duplicateUser = await User.findOne({ email: email }).exec();
+  const duplicateUser = await User.findOne({ username: username }).exec();
   if (duplicateUser)
     return res.status(409).json({ message: "user already registered" });
 
@@ -29,27 +39,29 @@ const handleNewUser = async (req, res) => {
       email: email,
       address: address,
       phone: phone,
+      ...(clubId && { clubId: clubId }),
+      ...(clubName && { clubName: clubName }),
       role: role,
       password: hashedPwd,
     });
 
     res
       .status(201)
-      .json({ message: `User created with name : ${savedUser.email}` });
+      .json({ message: `User created with name : ${savedUser.username}` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
 const handleLogin = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  if (!email || !password)
+  if (!username || !password)
     return res
       .status(400)
       .json({ message: "username and password are required!!" });
 
-  const foundUser = await User.findOne({ email: email }).exec();
+  const foundUser = await User.findOne({ username: username }).exec();
 
   if (!foundUser)
     return res
@@ -112,7 +124,7 @@ const handleRefreshToken = async (req, res) => {
   const refreshToken = cookies.jwt;
 
   const loggedInUser = await User.findOne({ refreshToken }).exec();
-  if (!loggedInUser) return res.status(403).json("sdfasf"); // Forbidden
+  if (!loggedInUser) return res.status(403).json("Forbidden"); // Forbidden
 
   // evaluate jwt
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
