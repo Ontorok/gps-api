@@ -114,6 +114,7 @@ const fetchAllFunded = async (req, res) => {
   const { page, perPage } = req.query;
   const searchObj = {
     isActive: true,
+    isInvalid: false,
     fundingStatus: { $eq: "Funded" },
   };
   try {
@@ -143,6 +144,7 @@ const fetchAllNonFunded = async (req, res) => {
   const { page, perPage } = req.query;
   const searchObj = {
     isActive: true,
+    isInvalid: false,
     fundingStatus: { $eq: "Non-Funded" },
   };
   try {
