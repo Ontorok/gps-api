@@ -78,6 +78,8 @@ const handleLogin = async (req, res) => {
         UserInfo: {
           email: foundUser.email,
           role: foundUser.role,
+          username: foundUser.username,
+          id: foundUser._id,
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -88,6 +90,8 @@ const handleLogin = async (req, res) => {
         UserInfo: {
           email: foundUser.email,
           roles: foundUser.roles,
+          username: foundUser.username,
+          id: foundUser._id,
         },
       },
       process.env.REFRESH_TOKEN_SECRET,
@@ -135,6 +139,8 @@ const handleRefreshToken = async (req, res) => {
         UserInfo: {
           email: loggedInUser.email,
           role: loggedInUser.role,
+          username: loggedInUser.username,
+          id: loggedInUser._id,
         },
       },
       process.env.ACCESS_TOKEN_SECRET,

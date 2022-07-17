@@ -30,8 +30,13 @@ const create = async (req, res) => {
 
 const createByUser = async (req, res) => {
   const gpsEntries = req.body;
+  const entries = gpsEntries.map((entry) => ({
+    ...entry,
+    createdBy: req.id,
+    createdAt: new Date(),
+  }));
   try {
-    const savedEntries = await Entry.insertMany(gpsEntries);
+    const savedEntries = await Entry.insertMany(entries);
     res.status(201).json({
       succeed: true,
       data: savedEntries,
