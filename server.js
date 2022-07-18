@@ -16,12 +16,12 @@ const {
   clubRoute,
   groomerRoute,
   entriesRoute,
+  usersRoute,
 } = require("./routes");
 const corsOptions = require("./config/corsConfig");
 const verifyJWT = require("./middleware/verifyJWT");
 const credentials = require("./middleware/credentials");
 const connectDB = require("./config/dbConnection");
-const { realpathSync } = require("fs");
 
 const PORT = process.env.PORT || 3500;
 
@@ -54,6 +54,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/club", clubRoute);
 app.use("/api/groomer", groomerRoute);
 app.use("/api/entries", entriesRoute);
+app.use("/api/users", usersRoute);
 
 app.use(errorHander);
 
