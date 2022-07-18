@@ -208,7 +208,13 @@ const changeEntriesValidityByRange = async (req, res) => {
   const { markedIds, isInvalid } = req.body;
   const entries = await Entry.updateMany(
     { _id: { $in: markedIds } },
-    { $set: { isInvalid: isInvalid } }
+    {
+      $set: {
+        isInvalid: isInvalid,
+        updatedBy: req.id,
+        updatedAt: new Date(),
+      },
+    }
   );
   if (entries.acknowledged) {
     res.status(200).json({
