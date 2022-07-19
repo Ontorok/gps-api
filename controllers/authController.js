@@ -3,7 +3,7 @@ const ROLE_LIST = require("../constants/roleList");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const accessToken_exprireIn = "1h";
+const accessToken_exprireIn = "1d";
 const refreshToken_expireIn = "1d";
 
 const handleNewUser = async (req, res) => {

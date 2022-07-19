@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 const fetchActiveUsers = async (req, res) => {
   const { page, perPage } = req.query;
@@ -96,9 +97,40 @@ const reStoreUser = async (req, res) => {
   });
 };
 
+const resetPassword = async (req, res) => {
+  const { adminpassword, username, userpassword } = req.body;
+  try {
+    const admin = await User.findOne({ username: req.username }).exec();
+    if (!admin) {
+      return res
+        .status(401)
+        .json({ message: "You are not permitted to perform this job!!" });
+    }
+    const isMatchedAdminPassword = await bcrypt.compare(
+      adminpassword,
+      admin.password
+    );
+    if (!isMatchedAdminPassword) {
+      return res.status(400).json({ message: "Incorrect Password!!!" });
+    } else {
+      const hashedPassword = await bcrypt.hash(userpassword, 10);
+      const targetuser = await User.findOne({ username: username }).exec();
+
+      targetuser.password = hashedPassword;
+      await targetuser.save();
+      res.status(200).json({ message: "Password resetted" });
+    }
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "There was an error to reset password!!!" });
+  }
+};
+
 module.exports = {
   fetchActiveUsers,
   fetchArchiveUsers,
   deleteUser,
   reStoreUser,
+  resetPassword,
 };

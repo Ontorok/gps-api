@@ -4,4 +4,11 @@ const ROLE_LIST = {
   User: "1754",
 };
 
-module.exports = ROLE_LIST;
+const ROLES = {
+  SuperAdmin: "Super Admin",
+  Admin: "Admin",
+  Manager: "Manager",
+  User: "User",
+};
+
+module.exports = { ROLE_LIST, ROLES };
