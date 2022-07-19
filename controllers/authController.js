@@ -68,6 +68,12 @@ const handleLogin = async (req, res) => {
       .status(401)
       .json({ message: "username or password is incorrect!!" });
 
+  if (!foundUser.isActive)
+    return res.status(401).json({
+      message:
+        "Your login state is currently inactive. Please cotact with admin",
+    });
+
   // evaluate password
   const isMatchPassword = await bcrypt.compare(password, foundUser.password);
   if (isMatchPassword) {
