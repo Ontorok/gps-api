@@ -1,5 +1,6 @@
 const Entry = require("../models/Entry");
 const Groomer = require("../models/Groomer");
+const User = require("../models/User");
 const _ = require("lodash");
 const moment = require("moment");
 const axios = require("axios");
@@ -47,6 +48,7 @@ const createByUser = async (req, res) => {
       err?.code === 11000
         ? "Duplicate record found!!!"
         : "There was an error to save these record!!";
+    console.log(err.message);
     res.status(500).json({ message: errMessage });
   }
 };
@@ -74,6 +76,8 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
       gpsId: item.gpsId,
       groomerName: item.name,
       rate: item.rate,
+      clubId: item.clubId,
+      clubName: item.clubName,
     }));
 
     const gpsData = Object.keys(rest)
@@ -103,6 +107,8 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
             ...item,
             groomerName: g.groomerName,
             rate: g.rate,
+            clubId: g.clubId,
+            clubName: g.clubName,
             total: Number((g.rate * item.eligibleTimeInHour).toFixed(2)),
           }))
       )
@@ -122,6 +128,10 @@ const fetchAllFunded = async (req, res) => {
     isInvalid: false,
     fundingStatus: { $eq: "Funded" },
   };
+  if (req.role !== "Super Admin" && req.role !== "Admin") {
+    const loggedInUser = await User.findOne({ username: req.username }).exec();
+    searchObj.clubId = loggedInUser.clubId;
+  }
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
@@ -129,7 +139,7 @@ const fetchAllFunded = async (req, res) => {
       .limit(perPage)
       .skip(startIndex)
       .select(
-        "deviceId groomerName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
+        "deviceId groomerName clubId clubName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
       )
       .exec();
 
@@ -152,6 +162,10 @@ const fetchAllNonFunded = async (req, res) => {
     isInvalid: false,
     fundingStatus: { $eq: "Non-Funded" },
   };
+  if (req.role !== "Super Admin" && req.role !== "Admin") {
+    const loggedInUser = await User.findOne({ username: req.username }).exec();
+    searchObj.clubId = loggedInUser.clubId;
+  }
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
@@ -159,7 +173,7 @@ const fetchAllNonFunded = async (req, res) => {
       .limit(perPage)
       .skip(startIndex)
       .select(
-        "deviceId groomerName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
+        "deviceId groomerName clubId clubName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
       )
       .exec();
 
@@ -181,6 +195,10 @@ const fetchAllInvalid = async (req, res) => {
     isActive: true,
     isInvalid: true,
   };
+  if (req.role !== "Super Admin" && req.role !== "Admin") {
+    const loggedInUser = await User.findOne({ username: req.username }).exec();
+    searchObj.clubId = loggedInUser.clubId;
+  }
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);

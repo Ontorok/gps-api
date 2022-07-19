@@ -197,10 +197,36 @@ const getAuthUser = async (req, res) => {
   });
 };
 
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  const foundUser = await User.findOne({ username: req.username }).exec();
+
+  if (!foundUser)
+    return res
+      .status(401)
+      .json({ message: "username or password is incorrect!!" });
+
+  const isMatchPassword = await bcrypt.compare(
+    currentPassword,
+    foundUser.password
+  );
+
+  if (isMatchPassword) {
+    const hashedPassword = await bcrypt.hash(confirmPassword, 10);
+    foundUser.password = hashedPassword;
+    await foundUser.save();
+    res.status(200).json({ message: "password changed!!!" });
+  } else {
+    res.status(404).json({ message: "password do not match" });
+  }
+};
+
 module.exports = {
   handleNewUser,
   handleLogin,
   handleRefreshToken,
   handleLogout,
   getAuthUser,
+  changePassword,
 };

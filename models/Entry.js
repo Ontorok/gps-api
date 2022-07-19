@@ -10,6 +10,14 @@ const entrySchema = new Schema({
     type: String,
     required: true,
   },
+  clubId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
+  clubName: {
+    type: String,
+    required: true,
+  },
   date: {
     type: String,
     required: true,

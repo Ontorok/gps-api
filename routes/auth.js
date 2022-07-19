@@ -5,6 +5,7 @@ const {
   handleRefreshToken,
   handleLogout,
   getAuthUser,
+  changePassword,
 } = require("../controllers/authController");
 const verifyJWT = require("../middleware/verifyJWT");
 
@@ -14,6 +15,7 @@ router.post("/register", handleNewUser);
 router.post("/login", handleLogin);
 router.get("/refresh", handleRefreshToken);
 router.post("/logout", handleLogout);
-router.get('/get-me', verifyJWT, getAuthUser)
+router.get("/get-me", verifyJWT, getAuthUser);
+router.put("/change-password", verifyJWT, changePassword);
 
 module.exports = router;
