@@ -64,8 +64,41 @@ const fetchArchiveUsers = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: "user not found!!" });
+  }
+
+  user.isActive = false;
+
+  const result = await user.save();
+
+  res.status(200).json({
+    succeed: true,
+    message: `User '${result.name}' removed successfully!!!`,
+  });
+};
+
+const reStoreUser = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ message: "user not found!!" });
+  }
+
+  user.isActive = true;
+
+  const result = await user.save();
+
+  res.status(200).json({
+    succeed: true,
+    message: `User '${result.name}' re-stored successfully!!!`,
+  });
+};
+
 module.exports = {
   fetchActiveUsers,
   fetchArchiveUsers,
+  deleteUser,
+  reStoreUser,
 };
-0;
