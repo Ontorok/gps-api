@@ -5,17 +5,21 @@ const clubSchema = new Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
+    },
+    normalizeName: {
+      type: String,
     },
     status: {
       type: Boolean,
-      default: true
+      default: true,
     },
     isActive: {
       type: Boolean,
-      default: true
-    }
-  }, { timestamps: true }
-)
+      default: true,
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Club", clubSchema)
+module.exports = mongoose.model("Club", clubSchema);

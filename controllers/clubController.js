@@ -1,3 +1,4 @@
+const { normalizeField } = require("../helpers/commonHelper");
 const Club = require("../models/Club");
 
 const fetchAll = async (req, res) => {
@@ -5,7 +6,10 @@ const fetchAll = async (req, res) => {
   const searchObj = {
     isActive: true,
   };
-  if (clubName) searchObj["name"] = { $regex: ".*" + clubName + ".*" };
+  if (clubName)
+    searchObj["normalizeName"] = {
+      $regex: ".*" + normalizeField(clubName) + ".*",
+    };
   if (status) searchObj["status"] = status === "active" ? true : false;
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
@@ -34,7 +38,10 @@ const fetchAllArchive = async (req, res) => {
   const searchObj = {
     isActive: false,
   };
-  if (clubName) searchObj["name"] = { $regex: ".*" + clubName + ".*" };
+  if (clubName)
+    searchObj["normalizeName"] = {
+      $regex: ".*" + normalizeField(clubName) + ".*",
+    };
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
@@ -74,7 +81,11 @@ const fetchAllActive = async (req, res) => {
 const create = async (req, res) => {
   const { name, state } = req.body;
   try {
-    const savedClub = await Club.create({ name, state });
+    const savedClub = await Club.create({
+      name: name.trim(),
+      normalizeName: normalizeField(name),
+      state,
+    });
     res.status(201).json({
       succeed: true,
       message: "Data saved successfully!!!!",
