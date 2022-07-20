@@ -206,7 +206,7 @@ const fetchAllInvalid = async (req, res) => {
       .limit(perPage)
       .skip(startIndex)
       .select(
-        "deviceId groomerName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
+        "deviceId groomerName clubId clubName date countyId countyName trailId trailName fundingStatus eligibleTime eligibleTimeInHour rate total isInvalid"
       )
       .exec();
 

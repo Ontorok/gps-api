@@ -1,10 +1,16 @@
+const { ROLES } = require("../constants/roleList");
 const Groomer = require("../models/Groomer");
+const User = require("../models/User");
 
 const fetchAll = async (req, res) => {
   const { page, perPage, sortedColumn, sortedBy } = req.query;
   const searchObj = {
     isActive: true,
   };
+  if (req.role !== ROLES.SuperAdmin && req.role !== ROLES.Admin) {
+    const loggedInUser = await User.findOne({ username: req.username }).exec();
+    searchObj.clubId = loggedInUser.clubId;
+  }
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
@@ -32,6 +38,10 @@ const fetchAllArchive = async (req, res) => {
   const searchObj = {
     isActive: false,
   };
+  if (req.role !== ROLES.SuperAdmin && req.role !== ROLES.Admin) {
+    const loggedInUser = await User.findOne({ username: req.username }).exec();
+    searchObj.clubId = loggedInUser.clubId;
+  }
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
