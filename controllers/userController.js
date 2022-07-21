@@ -1,32 +1,56 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const { normalizeField } = require("../helpers/commonHelper");
 
 const fetchActiveUsers = async (req, res) => {
-  const { page, perPage } = req.query;
+  const { page, perPage, sortedColumn, sortedBy, clubId, name, email, phone } =
+    req.query;
+
   const excludedRoles = ["Super Admin"];
+
   if (req.role == "Admin") excludedRoles.push("Admin");
   const searchObj = {
     isActive: true,
     role: { $nin: excludedRoles },
   };
+
+  // If user is not Admin or Super Admin
   if (req.role !== "Super Admin" && req.role !== "Admin") {
     const loggedInUser = await User.findOne({ username: req.username }).exec();
     searchObj.clubId = loggedInUser.clubId;
     searchObj.username = { $ne: req.username };
+  } else {
+    // If user is Admin or Super Admin
+    if (clubId) searchObj["clubId"] = clubId;
   }
+
+  if (name)
+    searchObj["normalizeName"] = {
+      $regex: ".*" + normalizeField(name) + ".*",
+    };
+  if (email)
+    searchObj["email"] = {
+      $regex: ".*" + email + ".*",
+    };
+  if (phone)
+    searchObj["phone"] = {
+      $regex: ".*" + phone + ".*",
+    };
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
     const users = await User.find(searchObj)
+      .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
-      .select("name username email address phone role clubId clubName");
+      .select("name username email address phone role clubId clubName")
+      .exec();
 
     const total = await User.countDocuments(searchObj).exec();
     res.status(200).json({
       succeed: true,
-      result: users,
       totalRows: total,
+      result: users,
     });
   } catch (err) {
     res.status(500).json({ message: "internal" });
@@ -50,6 +74,7 @@ const fetchArchiveUsers = async (req, res) => {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
     const users = await User.find(searchObj)
+      .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
       .select("name username email address phone role clubId clubName");

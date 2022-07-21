@@ -7,6 +7,9 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    normalizeName: {
+      type: String,
+    },
     username: {
       type: String,
       required: true,
