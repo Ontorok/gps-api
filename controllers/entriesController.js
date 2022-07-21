@@ -10,10 +10,30 @@ const create = async (req, res) => {
   const gpsEntries = req.body;
   try {
     const activeGroomers = await Groomer.find({ isActive: true }).exec();
-    const groomersIds = _.uniq(activeGroomers.map((item) => item.gpsId));
-    const filteredGpsEntries = groomersIds
-      .map((g) => gpsEntries.filter((entry) => entry.deviceId === g))
+
+    const groomers = activeGroomers.map((item) => ({
+      gpsId: item.normalizeGpsId,
+      groomerName: item.name,
+      rate: item.rate,
+      clubId: item.clubId,
+      clubName: item.clubName,
+    }));
+
+    const filteredGpsEntries = groomers
+      .map((g) =>
+        gpsEntries
+          .filter((entry) => entry.deviceId.toUpperCase() === g.gpsId)
+          .map((item) => ({
+            ...item,
+            groomerName: g.groomerName,
+            rate: g.rate,
+            clubId: g.clubId,
+            clubName: g.clubName,
+            total: Number((g.rate * item.eligibleTimeInHour).toFixed(2)),
+          }))
+      )
       .flat();
+
     const savedClub = await Entry.insertMany(filteredGpsEntries);
     res.status(201).json({
       succeed: true,
@@ -73,7 +93,7 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
   } else {
     const activeGroomers = await Groomer.find({ isActive: true }).exec();
     const groomers = activeGroomers.map((item) => ({
-      gpsId: item.gpsId,
+      gpsId: item.normalizeGpsId,
       groomerName: item.name,
       rate: item.rate,
       clubId: item.clubId,
@@ -98,11 +118,10 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
       }));
 
     const uniqueGpsData = _.uniqBy(gpsData, "comparatorKey");
-
     const filteredGpsEntries = groomers
       .map((g) =>
         uniqueGpsData
-          .filter((entry) => entry.deviceId === g.gpsId)
+          .filter((entry) => entry.deviceId.toUpperCase() === g.gpsId)
           .map((item) => ({
             ...item,
             groomerName: g.groomerName,
