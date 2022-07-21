@@ -6,6 +6,9 @@ const groomerSchema = new Schema({
     type: String,
     required: true,
   },
+  normalizeName: {
+    type: String,
+  },
   clubId: {
     type: Schema.Types.ObjectId,
     ref: "Club",
@@ -18,6 +21,9 @@ const groomerSchema = new Schema({
   gpsId: {
     type: String,
     required: true,
+  },
+  normalizeGpsId: {
+    type: String,
   },
   rate: {
     type: Number,

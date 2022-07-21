@@ -1,16 +1,31 @@
 const { ROLES } = require("../constants/roleList");
+const { normalizeField } = require("../helpers/commonHelper");
 const Groomer = require("../models/Groomer");
 const User = require("../models/User");
 
 const fetchAll = async (req, res) => {
-  const { page, perPage, sortedColumn, sortedBy } = req.query;
+  const { page, perPage, sortedColumn, sortedBy, clubId, name, gpsId } =
+    req.query;
   const searchObj = {
     isActive: true,
   };
+  // If user is not Admin or Super Admin
   if (req.role !== ROLES.SuperAdmin && req.role !== ROLES.Admin) {
     const loggedInUser = await User.findOne({ username: req.username }).exec();
-    searchObj.clubId = loggedInUser.clubId;
+    searchObj["clubId"] = loggedInUser.clubId;
+  } else {
+    // If user is Admin or Super Admin
+    if (clubId) searchObj["clubId"] = clubId;
   }
+  if (name)
+    searchObj["normalizeName"] = {
+      $regex: ".*" + normalizeField(name) + ".*",
+    };
+  if (gpsId)
+    searchObj["normalizeGpsId"] = {
+      $regex: ".*" + normalizeField(gpsId) + ".*",
+    };
+
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
@@ -68,10 +83,12 @@ const create = async (req, res) => {
   const { name, clubId, clubName, gpsId, rate, isActive } = req.body;
   try {
     const savedGroomer = await Groomer.create({
-      name,
+      name: name.trim(),
+      normalizeName: normalizeField(name),
       clubId,
       clubName,
-      gpsId,
+      gpsId: gpsId.trim(),
+      normalizeGpsId: normalizeField(gpsId),
       rate,
       isActive,
     });
