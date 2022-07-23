@@ -49,14 +49,30 @@ const fetchAll = async (req, res) => {
 };
 
 const fetchAllArchive = async (req, res) => {
-  const { page, perPage, sortedColumn, sortedBy } = req.query;
+  const { page, perPage, sortedColumn, sortedBy, clubId, name, gpsId } =
+    req.query;
   const searchObj = {
     isActive: false,
   };
+
+  // If user is not Admin or Super Admin
   if (req.role !== ROLES.SuperAdmin && req.role !== ROLES.Admin) {
     const loggedInUser = await User.findOne({ username: req.username }).exec();
     searchObj.clubId = loggedInUser.clubId;
+  } else {
+    // If user is Admin or Super Admin
+    if (clubId) searchObj["clubId"] = clubId;
   }
+
+  if (name)
+    searchObj["normalizeName"] = {
+      $regex: ".*" + normalizeField(name) + ".*",
+    };
+  if (gpsId)
+    searchObj["normalizeGpsId"] = {
+      $regex: ".*" + normalizeField(gpsId) + ".*",
+    };
+
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
