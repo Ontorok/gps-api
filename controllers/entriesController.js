@@ -44,7 +44,6 @@ const create = async (req, res) => {
       err?.code === 11000
         ? "Duplicate record found!!!"
         : "There was an error to save these record!!";
-    console.log(err.message);
     res.status(500).json({ message: errMessage });
   }
 };
@@ -68,7 +67,6 @@ const createByUser = async (req, res) => {
       err?.code === 11000
         ? "Duplicate record found!!!"
         : "There was an error to save these record!!";
-    console.log(err.message);
     res.status(500).json({ message: errMessage });
   }
 };
@@ -141,20 +139,44 @@ const fetchGpsDataFromKnackApi = async (req, res) => {
 };
 
 const fetchAllFunded = async (req, res) => {
-  const { page, perPage } = req.query;
+  const {
+    page,
+    perPage,
+    sortedColumn,
+    sortedBy,
+    clubId,
+    deviceId,
+    fromDate,
+    toDate,
+  } = req.query;
+
   const searchObj = {
     isActive: true,
     isInvalid: false,
     fundingStatus: { $eq: "Funded" },
   };
+
+  // If user is not Admin or Super Admin
   if (req.role !== "Super Admin" && req.role !== "Admin") {
     const loggedInUser = await User.findOne({ username: req.username }).exec();
     searchObj.clubId = loggedInUser.clubId;
+  } else {
+    // If user is Admin or Super Admin
+    if (clubId) searchObj["clubId"] = clubId;
   }
+
+  if (deviceId) searchObj["deviceId"] = deviceId;
+  if (fromDate && toDate) {
+    searchObj["date"] = { $gte: fromDate, $lte: toDate };
+  } else {
+    if (fromDate) searchObj["date"] = { $gte: fromDate };
+  }
+
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
     const clubs = await Entry.find(searchObj)
+      .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
       .select(
@@ -175,20 +197,43 @@ const fetchAllFunded = async (req, res) => {
 };
 
 const fetchAllNonFunded = async (req, res) => {
-  const { page, perPage } = req.query;
+  const {
+    page,
+    perPage,
+    sortedColumn,
+    sortedBy,
+    clubId,
+    deviceId,
+    fromDate,
+    toDate,
+  } = req.query;
   const searchObj = {
     isActive: true,
     isInvalid: false,
     fundingStatus: { $eq: "Non-Funded" },
   };
+
+  // If user is not Admin or Super Admin
   if (req.role !== "Super Admin" && req.role !== "Admin") {
     const loggedInUser = await User.findOne({ username: req.username }).exec();
     searchObj.clubId = loggedInUser.clubId;
+  } else {
+    // If user is Admin or Super Admin
+    if (clubId) searchObj["clubId"] = clubId;
   }
+
+  if (deviceId) searchObj["deviceId"] = deviceId;
+  if (fromDate && toDate) {
+    searchObj["date"] = { $gte: fromDate, $lte: toDate };
+  } else {
+    if (fromDate) searchObj["date"] = { $gte: fromDate };
+  }
+
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
     const clubs = await Entry.find(searchObj)
+      .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
       .select(
@@ -209,19 +254,42 @@ const fetchAllNonFunded = async (req, res) => {
 };
 
 const fetchAllInvalid = async (req, res) => {
-  const { page, perPage } = req.query;
+  const {
+    page,
+    perPage,
+    sortedColumn,
+    sortedBy,
+    clubId,
+    deviceId,
+    fromDate,
+    toDate,
+  } = req.query;
   const searchObj = {
     isActive: true,
     isInvalid: true,
   };
+
+  // If user is not Admin or Super Admin
   if (req.role !== "Super Admin" && req.role !== "Admin") {
     const loggedInUser = await User.findOne({ username: req.username }).exec();
     searchObj.clubId = loggedInUser.clubId;
+  } else {
+    // If user is Admin or Super Admin
+    if (clubId) searchObj["clubId"] = clubId;
   }
+
+  if (deviceId) searchObj["deviceId"] = deviceId;
+  if (fromDate && toDate) {
+    searchObj["date"] = { $gte: fromDate, $lte: toDate };
+  } else {
+    if (fromDate) searchObj["date"] = { $gte: fromDate };
+  }
+
   try {
     const startIndex = (parseInt(page) - 1) * parseInt(perPage);
     const endIndex = (parseInt(page) - 1 + 1) * parseInt(perPage);
     const clubs = await Entry.find(searchObj)
+      .sort({ [sortedColumn]: sortedBy })
       .limit(perPage)
       .skip(startIndex)
       .select(

@@ -189,7 +189,7 @@ const handleLogout = async (req, res) => {
 };
 
 const getAuthUser = async (req, res) => {
-  const foundUser = await User.findOne({ email: req.email }).exec();
+  const foundUser = await User.findOne({ username: req.username }).exec();
   const { password, __v, createdAt, updatedAt, refreshToken, ...remainings } =
     foundUser._doc;
   res.status(200).json({

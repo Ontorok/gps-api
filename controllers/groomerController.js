@@ -95,6 +95,40 @@ const fetchAllArchive = async (req, res) => {
   }
 };
 
+const fetchAllActiveGroomers = async (req, res) => {
+  const searchObj = {
+    isActive: true,
+  };
+  try {
+    const groomers = await Groomer.find(searchObj)
+      .select("name clubId clubName gpsId normalizeGpsId rate isActive")
+      .exec();
+
+    return res.status(200).json({
+      succeed: true,
+      result: groomers,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const fetchGroomerByClub = async (req, res) => {
+  const clubId = req.params.id === "undefined" ? "" : req.params.id;
+
+  try {
+    const clubWiseGroomers = await Groomer.find({
+      ...(clubId && { clubId: clubId }),
+    }).exec();
+    res
+      .status(200)
+      .json({ message: "success", succeed: true, result: clubWiseGroomers });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: "There was an error to load groomers" });
+  }
+};
+
 const create = async (req, res) => {
   const { name, clubId, clubName, gpsId, rate, isActive } = req.body;
   try {
@@ -168,6 +202,8 @@ const restore = async (req, res) => {
 module.exports = {
   fetchAll,
   fetchAllArchive,
+  fetchAllActiveGroomers,
+  fetchGroomerByClub,
   create,
   update,
   deleteRecord,
