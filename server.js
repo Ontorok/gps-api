@@ -38,7 +38,7 @@ app.use(logger);
 app.use(credentials);
 
 // CORS (Cross Origin Resource Sharing)
-app.use(cors(corsOptions));
+app.use(cors());
 
 // build-in- middleware to handle urlencoded data  in other words form data
 app.use(express.urlencoded({ extended: false }));
@@ -50,6 +50,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 // routes handler
+app.get("/test", (req, res) => {
+  res.send("Test Success");
+});
 app.use("/api/auth", authRoute);
 app.use("/api/club", clubRoute);
 app.use("/api/groomer", groomerRoute);
