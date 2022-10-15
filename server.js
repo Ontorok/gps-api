@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "./.env.development" });
+require("dotenv").config();
 // Core modules
 const express = require("express");
 const path = require("path");
@@ -38,7 +38,7 @@ app.use(logger);
 app.use(credentials);
 
 // CORS (Cross Origin Resource Sharing)
-app.use(cors());
+app.use(cors(corsOptions));
 
 // build-in- middleware to handle urlencoded data  in other words form data
 app.use(express.urlencoded({ extended: false }));
